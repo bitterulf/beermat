@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title>client</title>
+        <script src="primus.js"></script>
+        <script>
+            const primus = Primus.connect('ws://localhost:6666');
+
+            const state = {};
+
+            primus.on('data', function(data) {
+                console.log(data);
+                if (data.type = 'stateUpdate') {
+                    Object.keys(data.state.files).forEach(function(file) {
+                        if (state.file && state.file[file] && state.file[file] == data.state.files[file]) {
+
+                        }
+                        else {
+                            console.log('i should load', data.state.files[file]);
+                        }
+                    });
+
+                    state.files = data.state.files;
+                }
+            });
+
+
+            primus.on('open', function() {
+                primus.write({identity: 'user:bob'});
+                primus.write({type: 'jump'});
+            })
+
+        </script>
+    </head>
+    <body>
+    </body>
+</html>
