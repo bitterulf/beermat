@@ -10,7 +10,8 @@ seneca.add('type:jump', (msg, reply) => {
 
     reply(null, {
         actions: [
-            {type: 'upload', name: 'foo', content: { foo: 'bar' } }
+            {type: 'upload', name: 'info', extension: 'txt', content: 'hello there!' },
+            {type: 'upload', name: 'foo', extension: 'json', content: { foo: 'bar' } }
         ]
     });
 })
@@ -26,7 +27,7 @@ module.exports = function start() {
 
             result.actions.forEach(function(action) {
                 if (action.type == 'upload') {
-                    outputUpload.send(JSON.stringify({name: action.name, content: action.content }));
+                    outputUpload.send(JSON.stringify({name: action.name, extension: action.extension, content: action.content }));
                 }
             });
         })
