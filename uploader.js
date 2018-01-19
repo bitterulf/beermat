@@ -17,6 +17,12 @@ try {
 
 }
 
+try {
+    fs.mkdirSync('./temp');
+} catch (e) {
+
+}
+
 module.exports = function start() {
     const Socket = Primus.createSocket()
     const client = new Socket('http://localhost:6666');

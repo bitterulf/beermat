@@ -1,11 +1,16 @@
 <html>
     <head>
         <title>client</title>
+        <script src="//unpkg.com/mithril/mithril.js"></script>
         <script src="primus.js"></script>
         <script>
             const primus = Primus.connect('ws://localhost:6666');
 
-            const state = {};
+            const state = {
+                content: {
+
+                }
+            };
 
             primus.on('data', function(data) {
                 console.log(data);
@@ -15,7 +20,34 @@
 
                         }
                         else {
-                            console.log('i should load', data.state.files[file]);
+                            if (data.state.files[file].indexOf('.svg') > -1) {
+                                state.content[file] = '/data/' + data.state.files[file];
+                            }
+                            else if (data.state.files[file].indexOf('.png') > -1) {
+                                state.content[file] = '/data/' + data.state.files[file];
+                            }
+                            else if (data.state.files[file].indexOf('.txt') > -1) {
+                                m.request({
+                                    method: 'GET',
+                                    url: '/data/' + data.state.files[file],
+                                    deserialize: function(result) {
+
+                                        return result;
+                                    }
+                                })
+                                .then(function(result) {
+                                    state.content[file] = result;
+                                })
+                            }
+                            else {
+                                m.request({
+                                    method: 'GET',
+                                    url: '/data/' + data.state.files[file]
+                                })
+                                .then(function(result) {
+                                    state.content[file] = result;
+                                })
+                            }
                         }
                     });
 
@@ -29,8 +61,21 @@
                 primus.write({type: 'jump'});
             })
 
+            const App = {
+                view: function() {
+                    return m('main', [
+                        m('h1', {}, state.content.info),
+                        state.content.map ? m('object', { data: state.content.map }) : undefined,
+                        state.content.map ? m('img', { src: state.content.flop }) : undefined
+                    ])
+                }
+            }
+
         </script>
     </head>
     <body>
+        <script>
+            m.mount(document.body, App);
+        </script>
     </body>
 </html>

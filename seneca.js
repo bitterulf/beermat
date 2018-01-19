@@ -6,12 +6,16 @@ const outputUpload = zmq.socket('push').bindSync('tcp://127.0.0.1:4000');
 
 var seneca = require('seneca')()
 
+const mapSVG = require('fs').readFileSync('./map.svg').toString();
+
 seneca.add('type:jump', (msg, reply) => {
 
     reply(null, {
         actions: [
             {type: 'upload', name: 'info', extension: 'txt', content: 'hello there!' },
-            {type: 'upload', name: 'foo', extension: 'json', content: { foo: 'bar' } }
+            {type: 'upload', name: 'foo', extension: 'json', content: { foo: 'bar' } },
+            {type: 'upload', name: 'map', extension: 'svg', content: mapSVG },
+            {type: 'upload', name: 'flop', extension: 'blend', content: '' }
         ]
     });
 })
