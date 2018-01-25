@@ -2,6 +2,12 @@ import os
 import bpy
 import json
 
+import sys
+argv = sys.argv
+argv = argv[argv.index("--") + 1:]
+
+jobId = argv[0]
+
 bpy.ops.object.select_all(action='DESELECT')
 bpy.data.objects['Cube'].select = True
 bpy.data.objects['Camera'].select = True
@@ -12,7 +18,9 @@ path = os.path.dirname(os.path.realpath(__file__))
 
 blendfile = path + "/repository.blend"
 
-placedTiles = json.load(open('placedTiles.json'))
+jobData = json.load(open('./temp/renderJob_' + jobId + '.json'))
+
+placedTiles = jobData
 
 for placedTile in placedTiles :
     if placedTile['type'] == 'tile' :
@@ -47,5 +55,5 @@ for placedTile in placedTiles :
 for obj in bpy.data.objects:
     if ( obj.type =='CAMERA') :
         bpy.context.scene.camera = obj
-        bpy.context.scene.render.filepath = '//temp/' + obj.name
+        bpy.context.scene.render.filepath = '//temp/' + jobId + '_' + obj.name
         bpy.ops.render.render( write_still=True )

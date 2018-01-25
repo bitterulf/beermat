@@ -62,4 +62,6 @@ mapData.layers.forEach(function(layer) {
     }
 });
 
-fs.writeFileSync('./placedTiles.json', JSON.stringify(placedTiles));
+fs.writeFileSync('./temp/renderJob_lalala.json', JSON.stringify({
+    placedTiles: placedTiles
+}));
