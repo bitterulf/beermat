@@ -27,22 +27,8 @@
                  "type":"camera",
                  "visible":true,
                  "width":32,
-                 "x":0,
-                 "y":128
-                },
-                {
-                 "gid":1,
-                 "height":0,
-                 "name":"freeFred",
-                 "properties":
-                    {
-
-                    },
-                 "type":"stuff",
-                 "visible":true,
-                 "width":0,
-                 "x":111,
-                 "y":47
+                 "x":32,
+                 "y":256
                 },
                 {
                  "ellipse":true,
@@ -51,12 +37,12 @@
                  "properties":
                     {
                      "marker":"bar",
-                     "z":"-32"
+                     "z":"0"
                     },
                  "type":"target",
                  "visible":true,
                  "width":32,
-                 "x":64,
+                 "x":32,
                  "y":32
                 },
                 {
@@ -71,8 +57,50 @@
                  "type":"camera",
                  "visible":true,
                  "width":32,
-                 "x":160,
-                 "y":256
+                 "x":256,
+                 "y":96
+                },
+                {
+                 "gid":1,
+                 "height":0,
+                 "name":"item1",
+                 "properties":
+                    {
+
+                    },
+                 "type":"stuff",
+                 "visible":true,
+                 "width":0,
+                 "x":64,
+                 "y":192
+                },
+                {
+                 "gid":2,
+                 "height":0,
+                 "name":"item2",
+                 "properties":
+                    {
+
+                    },
+                 "type":"stuff",
+                 "visible":true,
+                 "width":0,
+                 "x":128,
+                 "y":96
+                },
+                {
+                 "gid":3,
+                 "height":0,
+                 "name":"item3",
+                 "properties":
+                    {
+
+                    },
+                 "type":"stuff",
+                 "visible":true,
+                 "width":0,
+                 "x":96,
+                 "y":160
                 }],
          "opacity":1,
          "type":"objectgroup",

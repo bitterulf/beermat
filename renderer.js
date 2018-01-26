@@ -13,125 +13,7 @@ const fs = require('fs');
 
 const id = require('shortid').generate;
 
-const fakeRenderData = [{
-    "name": "tile_0_0"
-    , "x": 16
-    , "y": 16
-    , "properties": {
-        "hot": "true"
-        , "model": "Red"
-    }
-    , "type": "tile"
-}, {
-    "name": "tile_1_0"
-    , "x": 48
-    , "y": 16
-    , "properties": {
-        "model": "Green"
-    }
-    , "type": "tile"
-}, {
-    "name": "tile_2_0"
-    , "x": 80
-    , "y": 16
-    , "properties": {
-        "model": "Blue"
-    }
-    , "type": "tile"
-}, {
-    "name": "tile_3_0"
-    , "x": 112
-    , "y": 16
-    , "properties": {
-        "model": "Cyan"
-    }
-    , "type": "tile"
-}, {
-    "name": "tile_99_0"
-    , "x": 3184
-    , "y": 16
-    , "properties": {
-        "model": "Green"
-    }
-    , "type": "tile"
-}, {
-    "name": "tile_0_1"
-    , "x": 16
-    , "y": 48
-    , "properties": {
-        "hot": "true"
-        , "model": "Red"
-    }
-    , "type": "tile"
-}, {
-    "name": "tile_2_1"
-    , "x": 80
-    , "y": 48
-    , "properties": {
-        "model": "Blue"
-    }
-    , "type": "tile"
-}, {
-    "name": "tile_2_2"
-    , "x": 80
-    , "y": 80
-    , "properties": {
-        "model": "Blue"
-    }
-    , "type": "tile"
-}, {
-    "name": "tile_1_3"
-    , "x": 48
-    , "y": 112
-    , "properties": {
-        "model": "Blue"
-    }
-    , "type": "tile"
-}, {
-    "name": "tile_2_3"
-    , "x": 80
-    , "y": 112
-    , "properties": {
-        "model": "Green"
-    }
-    , "type": "tile"
-}, {
-    "name": "cam"
-    , "x": 16
-    , "y": 144
-    , "properties": {
-        "target": "target1"
-        , "z": "64"
-    }
-    , "type": "camera"
-}, {
-    "name": "freeFred"
-    , "x": 127
-    , "y": 31
-    , "properties": {
-        "hot": "true"
-        , "model": "Red"
-    }
-    , "type": "stuff"
-}, {
-    "name": "target1"
-    , "x": 80
-    , "y": 48
-    , "properties": {
-        "marker": "bar"
-        , "z": "-32"
-    }
-    , "type": "target"
-}, {
-    "name": "cam2"
-    , "x": 176
-    , "y": 272
-    , "properties": {
-        "target": "target1"
-        , "z": "64"
-    }
-    , "type": "camera"
-}];
+const _ = require('highland');
 
 module.exports = function start() {
 
@@ -171,10 +53,32 @@ module.exports = function start() {
         else if (data.extension == 'blend') { // temp/renderJob_' + jobId + '.json
             const uniqueName = id();
 
-            fs.writeFile('./temp/renderJob_' + uniqueName + '.json', JSON.stringify(fakeRenderData), function(err, file) {
+            fs.writeFile('./temp/renderJob_' + uniqueName + '.json', JSON.stringify(data.content), function(err, file) {
                 exec('blender --background --python append.py -- ' + uniqueName, (err, stdout, stderr) => {
-                    fs.readFile('./temp/renderJob_' + uniqueName + '.json', function(err, file) {
-                        console.log(file.toString());
+                    fs.readFile('./temp/renderJob_' + uniqueName + '_result.json', function(err, file) {
+                        const images = JSON.parse(file.toString());
+
+                        const readFile = _.wrapCallback(fs.readFile);
+
+                        _(images)
+                            .map(function(filename) {
+                                return './temp/' + filename
+                            })
+                            .map(readFile)
+                            .flatten()
+                            .invoke('toString', ['base64'])
+                            .toArray(function(imageContents) {
+                                images.forEach(function(image, i){
+                                    const nameParts = image.split('.')[0].split('_')
+                                    const name = nameParts[nameParts.length - 1];
+
+                                    outputRender.send(JSON.stringify({
+                                        name: name,
+                                        extension: 'png',
+                                        content: imageContents[i]
+                                    }));
+                                })
+                            });
                     });
                 });
             });

@@ -63,10 +63,30 @@
 
             const App = {
                 view: function() {
+                    renderMapData = function(mapData) {
+                        return m('div',
+                            mapData
+                                .filter(function(element) {
+                                    return element.type == 'stuff'
+                                })
+                                .map(function(element) {
+                                    return m('div', {
+                                        onclick: function() {
+                                            console.log('collect', element.name);
+                                            primus.write({type: 'collect', target: element.name });
+                                        }
+                                    }, element.name)
+                                })
+                        );
+                    };
+
                     return m('main', [
                         m('h1', {}, state.content.info),
+                        state.content.cam ? m('img', { src: state.content.cam,  width: 300 }) : undefined,
+                        state.content.cam2 ? m('img', { src: state.content.cam2,  width: 300 }) : undefined,
+                        state.content.mapData ? renderMapData(state.content.mapData) : undefined,
                         state.content.map ? m('object', { data: state.content.map }) : undefined,
-                        state.content.map ? m('img', { src: state.content.flop }) : undefined
+                        state.content.flop ? m('img', { src: state.content.flop }) : undefined
                     ])
                 }
             }

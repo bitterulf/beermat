@@ -52,8 +52,14 @@ for placedTile in placedTiles :
                 ttc.track_axis = 'TRACK_NEGATIVE_Z'
                 ttc.up_axis = 'UP_Y'
 
+renderedImages = []
+
 for obj in bpy.data.objects:
     if ( obj.type =='CAMERA') :
         bpy.context.scene.camera = obj
         bpy.context.scene.render.filepath = '//temp/' + jobId + '_' + obj.name
+        renderedImages.append(jobId + '_' + obj.name + '.png')
         bpy.ops.render.render( write_still=True )
+
+with open('./temp/renderJob_' + jobId + '_result.json', 'w') as outfile:
+    json.dump(renderedImages, outfile)

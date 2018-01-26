@@ -9,8 +9,10 @@
   "author": "",
   "license": "UNLICENSED",
   "dependencies": {
+    "highland": "^2.11.1",
     "primus": "^7.1.0",
     "seneca": "^3.4.3",
+    "seneca-entity": "^2.0.2",
     "shortid": "^2.2.8",
     "xml2js": "^0.4.19",
     "zeromq": "^4.6.0"
