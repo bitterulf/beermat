@@ -28,6 +28,7 @@ module.exports = function start() {
                 else if (data.identity == 'user:bob') {
                     spark.role = 'user';
                     spark.write({type: 'stateUpdate', state: state});
+                    outputActions.send(JSON.stringify({type: 'login'}));
                 }
             }
             else {

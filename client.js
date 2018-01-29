@@ -9,11 +9,7 @@ module.exports = function start() {
     client.write({identity: 'user:bob'});
 
     client.on('data', function(data) {
-        console.log('client got', data);
+        // console.log('client got', data);
     })
-
-    setTimeout(function() {
-        client.write({type: 'jump'});
-    }, 2000);
 
 }

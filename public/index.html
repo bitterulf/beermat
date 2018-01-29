@@ -24,6 +24,7 @@
                                 state.content[file] = '/data/' + data.state.files[file];
                             }
                             else if (data.state.files[file].indexOf('.png') > -1) {
+                                console.log('image change!', file);
                                 state.content[file] = '/data/' + data.state.files[file];
                             }
                             else if (data.state.files[file].indexOf('.txt') > -1) {
@@ -40,6 +41,7 @@
                                 })
                             }
                             else {
+                                console.log('data change!', file, data.state.files[file]);
                                 m.request({
                                     method: 'GET',
                                     url: '/data/' + data.state.files[file]
@@ -55,10 +57,8 @@
                 }
             });
 
-
             primus.on('open', function() {
-                primus.write({identity: 'user:bob'});
-                primus.write({type: 'jump'});
+                primus.write({identity: 'user:bob'})
             })
 
             const App = {

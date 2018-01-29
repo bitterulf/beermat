@@ -91,6 +91,7 @@ seneca.add('role:syncResources', (msg, reply) => {
                 return true;
             });
 
+        console.log('update with:', convertedMapData.filter(function(entry) { return entry.type == 'stuff' }));
         reply(null, {
             actions: [
                 {type: 'upload', name: 'info', extension: 'txt', content: 'hello there!' },
@@ -103,23 +104,60 @@ seneca.add('role:syncResources', (msg, reply) => {
     })
 })
 
-seneca.add('type:jump', (msg, reply) => {
-    seneca.act('role:syncResources', function (err, result) {
-        reply(null, result);
+seneca.add('role:tick', (msg, reply) => {
+
+    const collected = seneca.make('collectedStuff');
+
+    collected.list$({}, function(err, list) {
+        let somethingChanged = false;
+
+        list.forEach(function(entry) {
+            if (entry.date + 5000 < + new Date()) {
+                somethingChanged = true;
+
+                collected.remove$([entry.id], function(err) {
+                    console.log('regrow', err);
+                });
+            }
+        });
+
+        if (somethingChanged) {
+            setTimeout(function() {
+                seneca.act('role:syncResources', function (err, result) {
+                    reply(null, result);
+                });
+            }, 1000);
+        } else {
+            reply(null, {actions: []});
+        }
     });
-})
+});
 
 seneca.add('type:collect', (msg, reply) => {
     const collected = seneca.make('collectedStuff');
-    collected.name = msg.target;
 
-    // check if the thing is already collected
-    collected.save$(function(err){
-        seneca.act('role:syncResources', function (err, result) {
-            reply(null, result);
-        });
-    })
+    collected.load$({name: msg.target}, function(err, entry){
+        if (!entry) {
+            collected.name = msg.target;
+            collected.date = + new Date();
+            collected.save$(function(err){
+                seneca.act('role:syncResources', function (err, result) {
+                    reply(null, result);
+                });
+            })
+        }
+        else {
+            reply(null, {
+                actions: []
+            });
+        }
+    });
+})
 
+seneca.add('type:login', (msg, reply) => {
+    seneca.act('role:syncResources', function (err, result) {
+        reply(null, result);
+    });
 })
 
 module.exports = function start() {
@@ -138,4 +176,14 @@ module.exports = function start() {
             });
         })
     });
+
+    setInterval(function() {
+        seneca.act('role:tick', function (err, result) {
+            result.actions.forEach(function(action) {
+                if (action.type == 'upload') {
+                    outputUpload.send(JSON.stringify({name: action.name, extension: action.extension, content: action.content }));
+                }
+            });
+        })
+    }, 5000);
 }
