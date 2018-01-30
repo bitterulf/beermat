@@ -54,6 +54,8 @@ for placedTile in placedTiles :
 
 renderedImages = []
 
+bpy.context.scene.world.light_settings.use_ambient_occlusion = True
+
 for obj in bpy.data.objects:
     if ( obj.type =='CAMERA') :
         bpy.context.scene.camera = obj

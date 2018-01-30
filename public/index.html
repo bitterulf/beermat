@@ -2,12 +2,16 @@
     <head>
         <title>client</title>
         <script src="//unpkg.com/mithril/mithril.js"></script>
+        <script src="/components/MapComponent.js"></script>
         <script src="primus.js"></script>
         <script>
             const primus = Primus.connect('ws://localhost:6666');
 
             const state = {
                 content: {
+
+                },
+                contentUrls: {
 
                 }
             };
@@ -41,14 +45,17 @@
                                 })
                             }
                             else {
-                                console.log('data change!', file, data.state.files[file]);
-                                m.request({
-                                    method: 'GET',
-                                    url: '/data/' + data.state.files[file]
-                                })
-                                .then(function(result) {
-                                    state.content[file] = result;
-                                })
+                                if (state.contentUrls[file] != data.state.files[file]) {
+                                    console.log('data change!', file, data.state.files[file]);
+                                    m.request({
+                                        method: 'GET',
+                                        url: '/data/' + data.state.files[file]
+                                    })
+                                    .then(function(result) {
+                                        state.content[file] = result;
+                                        state.contentUrls[file] = data.state.files[file];
+                                    })
+                                }
                             }
                         }
                     });
@@ -63,37 +70,21 @@
 
             const App = {
                 view: function() {
-                    renderMapData = function(mapData) {
-                        return m('div',
-                            mapData
-                                .filter(function(element) {
-                                    return element.type == 'stuff'
-                                })
-                                .map(function(element) {
-                                    return m('div', {
-                                        onclick: function() {
-                                            console.log('collect', element.name);
-                                            primus.write({type: 'collect', target: element.name });
-                                        }
-                                    }, element.name)
-                                })
-                        );
-                    };
-
-                    return m('main', [
-                        m('h1', {}, state.content.info),
-                        state.content.cam ? m('img', { src: state.content.cam,  width: 300 }) : undefined,
-                        state.content.cam2 ? m('img', { src: state.content.cam2,  width: 300 }) : undefined,
-                        state.content.mapData ? renderMapData(state.content.mapData) : undefined,
-                        state.content.map ? m('object', { data: state.content.map }) : undefined,
-                        state.content.flop ? m('img', { src: state.content.flop }) : undefined
+                    return m('div', {}, [
+                        m('div', { style: 'position: absolute; left: 0px; top: 0px;'}, [
+                            state.content.cam ? m('img', { src: state.content.cam,  width: 300 }) : undefined,
+                            state.content.cam2 ? m('img', { src: state.content.cam2,  width: 300 }) : undefined
+                        ]),
+                        m(Map, {mapData: state.content.mapData, onClickStuff: function(name) {
+                            primus.write({type: 'collect', target: name });
+                        }})
                     ])
                 }
             }
 
         </script>
     </head>
-    <body>
+    <body style="margin: 0px;">
         <script>
             m.mount(document.body, App);
         </script>

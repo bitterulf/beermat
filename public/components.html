@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <title>components</title>
+        <script src="//unpkg.com/mithril/mithril.js"></script>
+        <script src="/components/MapComponent.js"></script>
+        <script>
+            const state = {};
+
+            m.request({
+                method: 'GET',
+                url: '/mapDataMock.json',
+            })
+            .then(function(result) {
+                console.log('rider', result);
+                state.mapData = result;
+            })
+
+            const App = {
+                view: function() {
+                    return m('main', [
+                        m(Map, {mapData: state.mapData, onClickStuff: function(name) {
+                            console.log('stuff was clicked!');
+                        }})
+                    ]);
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <script>
+            m.mount(document.body, App);
+        </script>
+    </body>
+</html>
