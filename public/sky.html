@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+    </head>
+    <body>
+        <a-scene>
+            <a-entity id="camera" camera look-controls camera-listener>
+                <a-entity cursor="rayOrigin: mouse;">
+                </a-entity>
+            </a-entity>
+
+            <a-assets>
+                <img id="sky" src="sky.png">
+            </a-assets>
+
+            <a-sky src="#sky"></a-sky>
+
+            <a-entity rotation="-10 85 0">
+                <a-circle onClick="console.log('door clicked')" position="0 0 -3" material="side: double; color: #EF2D5E; transparent: true; opacity: 0.5" geometry="primitive:circle;radius:0.5" radius="0.5"></a-circle>
+            </a-entity>
+
+        </a-scene>
+        <script>
+            document.querySelector('#camera').addEventListener('componentchanged', function (evt) {
+                if (evt.detail.name !== 'rotation') { return; }
+                console.log('new rot', evt.detail.target.getAttribute('rotation'));
+            });
+        </script>
+    </body>
+</html>
