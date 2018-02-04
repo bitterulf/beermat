@@ -21,9 +21,29 @@
 
         </a-scene>
         <script>
+            function projectLat (lat) {
+              if (isNaN(lat) || typeof lat !== 'number' || lat < -90 || lat > 90) {
+                throw new Error('latitude is not valid');
+              }
+              return ((lat - 90) / -180);
+
+            }
+            function projectLng (lng) {
+              if (isNaN(lng) || typeof lng !== 'number' || lng < -180 || lng > 180) {
+                throw new Error('longitude is not valid');
+              }
+              return (lng + 180) / 360;
+            }
+
             document.querySelector('#camera').addEventListener('componentchanged', function (evt) {
                 if (evt.detail.name !== 'rotation') { return; }
-                console.log('new rot', evt.detail.target.getAttribute('rotation'));
+
+                const rot = evt.detail.target.getAttribute('rotation');
+
+                const y = Math.round(projectLat(rot.x) * 1024);
+                const x = Math.round(projectLng(rot.y) * 2048);
+
+                console.log(x, y);
             });
         </script>
     </body>
