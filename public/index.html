@@ -3,6 +3,7 @@
         <title>client</title>
         <script src="//unpkg.com/mithril/mithril.js"></script>
         <script src="/components/MapComponent.js"></script>
+        <script src="/components/ContextMenuComponent.js"></script>
         <script src="primus.js"></script>
         <script>
             const primus = Primus.connect('ws://localhost:6666');
@@ -77,7 +78,8 @@
                         ]),
                         m(Map, {mapData: state.content.mapData, onClickStuff: function(name) {
                             primus.write({type: 'collect', target: name });
-                        }})
+                        }}),
+                        m(ContextMenuComponent, { entries: [{ name: 'A'}, { name: 'B'}] })
                     ])
                 }
             }

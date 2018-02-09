@@ -3,6 +3,7 @@
         <title>components</title>
         <script src="//unpkg.com/mithril/mithril.js"></script>
         <script src="/components/MapComponent.js"></script>
+        <script src="/components/ContextMenuComponent.js"></script>
         <script>
             const state = {};
 
@@ -11,16 +12,24 @@
                 url: '/mapDataMock.json',
             })
             .then(function(result) {
-                console.log('rider', result);
                 state.mapData = result;
             })
 
             const App = {
                 view: function() {
                     return m('main', [
-                        m(Map, {mapData: state.mapData, onClickStuff: function(name) {
-                            console.log('stuff was clicked!');
-                        }})
+                        // m(Map, {mapData: state.mapData, onClickStuff: function(name) {
+                            // console.log('stuff was clicked!');
+                        // }}),
+                        m(ContextMenuComponent, {
+                            entries: [
+                                { icon: '>', name: 'Arm' },
+                                { icon: 'o', name: 'Beer' }
+                            ],
+                            onclick: function(entry, index) {
+                                console.log('===>', entry, index);
+                            }
+                        })
                     ]);
                 }
             }
