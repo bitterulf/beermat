@@ -2,6 +2,7 @@
     <head>
         <title>components</title>
         <script src="//unpkg.com/mithril/mithril.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.1/mousetrap.min.js"></script>
         <script src="/components/MapComponent.js"></script>
         <script src="/components/ContextMenuComponent.js"></script>
         <script>
@@ -23,8 +24,8 @@
                         // }}),
                         m(ContextMenuComponent, {
                             entries: [
-                                { icon: '>', name: 'Arm' },
-                                { icon: 'o', name: 'Beer' }
+                                { icon: '>', hotkey: 'y', name: 'Arm' },
+                                { icon: 'o', hotkey: 'x', name: 'Beer' }
                             ],
                             onclick: function(entry, index) {
                                 console.log('===>', entry, index);
